@@ -97,7 +97,7 @@ Operation.updateById = (id, operation, result) => {
 };
 
 Operation.remove = (id, result) => {
-  sql.query("DELETE FROM operations WHERE id = ?", id, (err, res) => {
+  sql.query("DELETE FROM operations WHERE id = ? LIMIT 1", id, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);

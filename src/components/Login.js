@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import  { Navigate } from 'react-router-dom';
 import "./styles/Login.css";
 //import useToken from "./useToken";
 
@@ -9,7 +10,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
   e.preventDefault();
 
-  const response = await fetch('http://localhost:8080/api/users/login', {
+  const response = fetch('http://localhost:8080/api/users/login', {
    method: 'POST',
    headers: { 
          'Accept': 'application/json',
@@ -18,7 +19,8 @@ export default function Login() {
    body: JSON.stringify({login : login, mdp : mdp})
   }).then(response => {
     if (response.ok) {
-      alert(response.statusText)
+      window.location.reload(false);
+      //alert(response.statusText)
     } else alert(response.statusText);
     
     return response.json();
@@ -35,11 +37,11 @@ export default function Login() {
   return(
     <>
     <div className="login-wrapper">
-      <div className="main">
+      <div className="">
         <h1>Connexion</h1>
         <form >
           <label>
-            <p>Username</p>
+            <p>Login</p>
             <input type="text" onChange={e => setUserName(e.target.value)}/>
           </label>
           <label>

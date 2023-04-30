@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Display from "./Display";
 import Buttons from "./Buttons";
+import List from "./List";
 import "./styles/Calculator.css";
 import { evaluate, round } from "mathjs";
 
 function Calculator() {
+  const token = sessionStorage.getItem("token");
+  const [operationData, setOperationData] = useState([]);
+
   const [input, setInput] = useState("");
   const [answer, setAnswer] = useState("");
 
@@ -52,6 +56,17 @@ function Calculator() {
     return stack.length === 0;
   };
 
+  //Retrieve operations from database  
+  useEffect(() => {
+  fetch('http://localhost:8080/api/operations?fk_user_id='+token, {
+        }).then(response => response.json())
+        .then((data) => {
+          console.log(data);
+        setOperationData(data);
+        })
+        .catch(error => alert(error));
+    }, []);
+
   // calculate final answer
   const calculateAns = () => {
     if (input === "") return;
@@ -89,6 +104,26 @@ function Calculator() {
           : "Invalid Input!!"; //error.message;
     }
     isNaN(result) ? setAnswer(result) : setAnswer(round(result, 3));
+
+    //save operation  into database
+    //useEffect(() => {
+      fetch('http://localhost:8080/api/operations', {
+                method: 'POST',
+                headers: { 
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json',
+                      'charset':'utf-8' },
+                body: JSON.stringify({title : result, description : finalexpression, fk_user_id : token})
+              }).then(response => response.json())
+              .then((data) => {
+                setOperationData([...operationData, data]);
+                console.log(operationData);
+              })
+              .catch(error => {
+                    alert(error);
+                });
+    //}, [operationData.length]);
+
   };
 
   // remove last character
@@ -134,6 +169,8 @@ function Calculator() {
     <>
       <div className="container">
         <div className="main">
+        <h2>Historique</h2>
+          <List items={operationData} />
           <Display input={input} setInput={setInput} answer={answer} />
           <Buttons
             inputHandler={inputHandler}

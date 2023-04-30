@@ -10,38 +10,8 @@ const Display = ({ input, setInput, answer }) => {
     }
   };
 
-  const [operationData, setOperationData] = useState([]);
-  useEffect(() => {
-    const fetchPositions = async () => {
-        const token = sessionStorage.getItem("token");
-        const response = await fetch('http://localhost:8080/api/operations?fk_user_id='+token, {
-        }).then(response => {
-          if (response.ok) {
-            alert(response.statusText)
-          } else alert(response.statusText);
-          
-          return response.json();
-              })
-        .then((actualData) => {
-          console.log(actualData);
-        setOperationData(actualData);
-        })
-        .catch(error => {
-              alert(error);
-          });
-    };
-
-    fetchPositions();
-  }, []);
-
-
   return (
     <>
-    <ul>
-      {operationData.map((item, i) => (
-        <li>{item.description} = {item.title}</li>
-      ))}
-    </ul>
       <div className="display">
         {answer === "" ? (
           <>
